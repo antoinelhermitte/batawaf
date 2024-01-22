@@ -81,6 +81,8 @@ class Game():
             hand_remaining_players = Game.keys_of_max_values(test_cards)
         
         rrp = self.get_round_remaining_players()
+        print(rrp)
+        print(hand_remaining_players)
         if len(rrp) == 0 and len(test_cards) == 0:
             self.status = 'finished'
             self.winner = -1
@@ -128,17 +130,17 @@ class Game():
 def simulate(n_games):
     nb_hands_to_finish_game = []
     for _ in range(n_games):
-        g = Game(NB_PLAYERS,verbose=False)
+        g = Game(NB_PLAYERS,verbose=True)
         nb_hands = g.play_round()
         nb_hands_to_finish_game.append(nb_hands)
         del g
     return nb_hands_to_finish_game
 
 
-r = simulate(1000)
-print(f"Number of games that didn't finish {len([e for e in r if e == 0])}")
-print(f"Average number of hands to finish a game {sum(r)/len([e for e in r if e != 0])}")
-print(f"Min-Max number of hands to finish a game {min([e for e in r if e != 0])} - {max(r)}")
+# r = simulate(100)
+# print(f"Number of games that didn't finish {len([e for e in r if e == 0])}")
+# print(f"Average number of hands to finish a game {sum(r)/len([e for e in r if e != 0])}")
+# print(f"Min-Max number of hands to finish a game {min([e for e in r if e != 0])} - {max(r)}")
 
 # init_s = {0: [5, 3, 5, 1, 1, 2, 4, 1, 4, 6, 2, 6, 3, 6, 4, 2, 5, 3],
 #       1: [3, 5, 1, 1, 2, 4, 1, 4, 6, 2, 6, 3, 6, 4, 2, 5, 3, 5]}
@@ -148,6 +150,13 @@ print(f"Min-Max number of hands to finish a game {min([e for e in r if e != 0])}
 #           2: [6, 1, 6, 1, 3],
 #           3: [1]}
 
-# g = Game(4, init_s)
-# nb_hands = g.play_round()
-# print(nb_hands)
+init_s = {
+    0: [2, 3, 3, 3, 4, 4, 2, 2, 4, 2, 3, 3],
+    1: [3, 3, 3, 4, 4, 2, 2, 5],
+    2: [3, 3, 4, 4, 2, 2, 5, 5],
+    3: [3, 4, 4, 2, 2, 5, 5, 4]
+}
+
+g = Game(4, init_s)
+nb_hands = g.play_round()
+print(nb_hands)
