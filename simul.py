@@ -44,9 +44,10 @@ class Game():
     
 
     def keys_of_max_values(hand):
-        max_value = max(hand.values())
-        max_indexes = [k for k, v in hand.items() if v == max_value]
-
+        max_indexes = []
+        if hand.values():
+            max_value = max(hand.values())
+            max_indexes = [k for k, v in hand.items() if v == max_value]
         return max_indexes
     
 
@@ -56,8 +57,9 @@ class Game():
 
     def play_hand(self):
         # at the beginning of the hand we assume all players should have at least 1 card in their stack
-        test_cards = {k: self.cards[k][0] for k in self.cards.keys()}
-        trick_cards = [self.cards[k].pop(0) for k in self.cards.keys()]
+        rrp = self.get_round_remaining_players()
+        test_cards = {k: self.cards[k][0] for k in rrp}
+        trick_cards = [self.cards[k].pop(0) for k in rrp]
         
         hand_remaining_players = Game.keys_of_max_values(test_cards)
 
@@ -78,18 +80,18 @@ class Game():
             trick_cards.extend(list(test_cards.values()))
             hand_remaining_players = Game.keys_of_max_values(test_cards)
         
-        round_remaining_players = self.get_round_remaining_players()
-        if len(round_remaining_players) == 0 and len(test_cards) == 0:
+        rrp = self.get_round_remaining_players()
+        if len(rrp) == 0 and len(test_cards) == 0:
             self.status = 'finished'
             self.winner = -1
             if self.verbose:
                 print(f'==== Game ended in a draw ====')
-        elif len(round_remaining_players) == 0 and len(test_cards) > 0:
+        elif len(rrp) == 0 and len(test_cards) > 0:
             self.status = 'finished'
             self.winner = hand_remaining_players[0]
-        elif len(round_remaining_players) == 1:
+        elif len(rrp) == 1 and rrp == hand_remaining_players:
             self.status = 'finished'
-            self.winner = round_remaining_players[0]
+            self.winner = rrp[0]
         else:
             hand_winner = hand_remaining_players[0]
             if self.verbose:
@@ -101,13 +103,12 @@ class Game():
     def play_round(self):
         if self.verbose:
             print('--- Starting game ---')
-            print(str(self))
         i = 1
         while self.status == 'playing' and i <= Game.MAX_HANDS:
-            self.play_hand()
             if self.verbose:
                 print(f'--- Playing hand {i} ---')            
                 print(str(self))
+            self.play_hand()
             if self.status == 'finished':
                 if self.verbose:
                     print(f'==== Game finished after {i} hands - Player {self.winner} won the game =====')
@@ -139,6 +140,11 @@ print(f"Min-Max number of hands to finish a game {min([e for e in r if e != 0])}
 # init_s = {0: [5, 3, 5, 1, 1, 2, 4, 1, 4, 6, 2, 6, 3, 6, 4, 2, 5, 3],
 #       1: [3, 5, 1, 1, 2, 4, 1, 4, 6, 2, 6, 3, 6, 4, 2, 5, 3, 5]}
 
-# g = Game(2, init_s)
+# init_s = {0: [6, 1, 6, 5, 3, 3, 2],
+#           1: [1, 2, 5, 3, 3, 3, 3, 2, 3, 3, 2, 6, 2, 3, 1, 3, 6, 3, 6, 1, 1, 6, 3],
+#           2: [6, 1, 6, 1, 3],
+#           3: [1]}
+
+# g = Game(4, init_s)
 # nb_hands = g.play_round()
 # print(nb_hands)
