@@ -1,6 +1,6 @@
 import random
     
-NB_PLAYERS = 2
+NB_PLAYERS = 4
 NB_TRIES = 10000
 VERBOSE = True
 
@@ -92,6 +92,9 @@ class Game():
         elif len(rrp) == 1 and rrp == hand_remaining_players:
             self.status = 'finished'
             self.winner = rrp[0]
+        elif len(rrp) == 1 and len(hand_remaining_players) == 0:
+            self.status = 'finished'
+            self.winner = rrp[0]
         else:
             hand_winner = hand_remaining_players[0]
             if self.verbose:
@@ -132,7 +135,7 @@ def simulate(n_games):
     return nb_hands_to_finish_game
 
 
-r = simulate(NB_TRIES)
+r = simulate(1000)
 print(f"Number of games that didn't finish {len([e for e in r if e == 0])}")
 print(f"Average number of hands to finish a game {sum(r)/len([e for e in r if e != 0])}")
 print(f"Min-Max number of hands to finish a game {min([e for e in r if e != 0])} - {max(r)}")
